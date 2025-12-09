@@ -1,12 +1,12 @@
 # Menu Crawler for Taco Bell
 # 
 # This script crawls the menu for each Taco Bell store and saves the data to JSON files
-# organized by state and county.
+# organized by state and county. Each category is processed in parallel with its own
+# Selenium driver for faster scraping.
 #
 # Usage:
 #   python menucrawl.py                 - Process all stores (skip already done)
-#   python menucrawl.py 5               - Process only 5 stores for testing  
-#   python menucrawl.py 10 3 5          - Process 10 stores with 3 parallel browsers, 5 category workers each
+#   python menucrawl.py 5               - Process only 5 stores for testing
 
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
@@ -21,20 +21,55 @@ import json
 import time
 import os
 import sys
+import signal
+import atexit
 from tqdm import tqdm
-from concurrent.futures import ThreadPoolExecutor, as_completed
-import threading
+from concurrent.futures import ProcessPoolExecutor, as_completed
+import multiprocessing
+
+# Global variable to track the driver for cleanup
+_global_driver = None
+
+def cleanup_driver(driver=None):
+    """Safely close and quit the driver"""
+    global _global_driver
+    
+    # Use provided driver or global driver
+    target_driver = driver or _global_driver
+    
+    if target_driver:
+        try:
+            target_driver.quit()
+            print("Selenium driver closed successfully.")
+        except Exception as e:
+            print(f"Error closing driver: {e}")
+            try:
+                # Force kill if quit() fails
+                target_driver.service.process.kill()
+            except:
+                pass
+    
+    _global_driver = None
+
+def signal_handler(sig, frame):
+    """Handle Ctrl+C and other signals to cleanup driver"""
+    print("\n\nInterrupted! Cleaning up...")
+    cleanup_driver()
+    sys.exit(0)
 
 def setup_driver():
     """Set up and return a Chrome WebDriver instance"""
+    global _global_driver
+    
     chrome_options = Options()
-    chrome_options.add_argument("--headless")
+    # chrome_options.add_argument("--headless")
     chrome_options.add_argument("--disable-gpu")
     chrome_options.add_argument("--no-sandbox")
     chrome_options.add_argument("--disable-dev-shm-usage")
     chrome_options.add_argument("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36")
     
     driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=chrome_options)
+    _global_driver = driver
     return driver
 
 def get_item_customizations(driver):
@@ -107,6 +142,15 @@ def get_menu_categories(driver, store_number):
         menu_url = f"https://www.tacobell.com/food?store={store_number}"
         driver.get(menu_url)
         
+        # Check if page doesn't exist
+        try:
+            error_element = driver.find_element(By.XPATH, "//*[contains(text(), 'The page you were looking for does not exist')]")
+            if error_element:
+                print(f"      Page does not exist for store {store_number}")
+                return []
+        except:
+            pass  # Page exists, continue
+        
         # Wait for the menu grid to load
         WebDriverWait(driver, 15).until(
             EC.presence_of_element_located((By.CSS_SELECTOR, ".styles_menu-grid__3jFvm"))
@@ -159,6 +203,15 @@ def get_menu_items(driver, category_url, store_number):
         
         driver.get(category_url)
         
+        # Check if page doesn't exist
+        try:
+            error_element = driver.find_element(By.XPATH, "//*[contains(text(), 'The page you were looking for does not exist')]")
+            if error_element:
+                print(f"      Category page does not exist: {category_url}")
+                return []
+        except:
+            pass  # Page exists, continue
+        
         # Wait for the products grid to load
         WebDriverWait(driver, 15).until(
             EC.presence_of_element_located((By.CSS_SELECTOR, ".styles_products__hhyHx"))
@@ -166,7 +219,8 @@ def get_menu_items(driver, category_url, store_number):
         
         # Give it time to fully render
         time.sleep(2)
-          # Find all product cards using the correct class combination
+        
+        # Find all product cards using the correct class combination
         product_cards = driver.find_elements(By.CSS_SELECTOR, ".styles_card__3a_SE.styles_product-card__ogDyA")
         
         items = []
@@ -260,44 +314,55 @@ def get_menu_items(driver, category_url, store_number):
         print(f"      Error getting menu items: {str(e)}")
         return []
 
-def scrape_single_category(category, store_number):
+def process_category_worker(category_info):
     """
-    Scrape a single category (designed to be run in parallel)
-    Returns (category_name, items)
-    """
-    # Create a new driver for this thread
-    driver = setup_driver()
-    
-    try:
-        category_name = category["name"]
-        category_url = category["url"]
-        
-        # Get all items in this category (includes customizations)
-        items = get_menu_items(driver, category_url, store_number)
-        
-        return (category_name, items)
-        
-    except Exception as e:
-        return (category.get("name", "Unknown"), [])
-        
-    finally:
-        driver.quit()
-
-def scrape_store_menu(store_number, category_workers=5):
-    """
-    Scrape the full menu for a specific store with parallel category processing
+    Worker function to process a single category with its own driver.
+    This runs in a separate process for parallel processing.
     
     Args:
+        category_info: Dictionary with 'name', 'url', and 'store_number'
+    
+    Returns:
+        Tuple of (category_name, items_list, success)
+    """
+    category_name = category_info["name"]
+    category_url = category_info["url"]
+    store_number = category_info["store_number"]
+    
+    driver = None
+    try:
+        # Create a new driver for this category
+        driver = setup_driver()
+        
+        # Get all items in this category
+        items = get_menu_items(driver, category_url, store_number)
+        
+        return (category_name, items, True)
+        
+    except Exception as e:
+        return (category_name, [], False)
+        
+    finally:
+        # Clean up this process's driver
+        if driver:
+            try:
+                driver.quit()
+            except:
+                pass
+
+def scrape_store_menu(driver, store_number, max_workers=4):
+    """
+    Scrape the full menu for a specific store using parallel processing for categories
+    
+    Args:
+        driver: The WebDriver instance to use for getting categories
         store_number: The store number to scrape
-        category_workers: Number of parallel workers for categories (default: 5)
+        max_workers: Maximum number of parallel processes (default: 4)
     
     Returns a dictionary with all categories and their items
     """
-    # Create a driver just to get the categories list
-    driver = setup_driver()
-    
     try:
-        # Get all menu categories
+        # Get all menu categories using the main driver
         categories = get_menu_categories(driver, store_number)
         
         if not categories:
@@ -308,34 +373,44 @@ def scrape_store_menu(store_number, category_workers=5):
             "categories": {}
         }
         
-        # Process categories in parallel
-        with ThreadPoolExecutor(max_workers=category_workers) as executor:
-            futures = [executor.submit(scrape_single_category, category, store_number) for category in categories]
+        # Prepare category info for parallel processing
+        category_tasks = [
+            {
+                "name": cat["name"],
+                "url": cat["url"],
+                "store_number": store_number
+            }
+            for cat in categories
+        ]
+        
+        # Process categories in parallel using separate processes
+        with ProcessPoolExecutor(max_workers=max_workers) as executor:
+            # Submit all category tasks
+            future_to_category = {
+                executor.submit(process_category_worker, cat_info): cat_info["name"]
+                for cat_info in category_tasks
+            }
             
-            for future in as_completed(futures):
-                category_name, items = future.result()
-                menu_data["categories"][category_name] = items
+            # Collect results as they complete
+            for future in as_completed(future_to_category):
+                category_name, items, success = future.result()
+                if success:
+                    menu_data["categories"][category_name] = items
         
         return menu_data
         
     except Exception as e:
         print(f"      Error scraping store menu: {str(e)}")
         return None
-        
-    finally:
-        driver.quit()
 
-# Thread-safe lock for progress bar updates
-progress_lock = threading.Lock()
-
-def process_single_store(store_info, pbar=None, category_workers=5):
+def process_single_store(driver, store_info, pbar=None):
     """
-    Process a single store (designed to be run in parallel)
+    Process a single store using a single driver
     
     Args:
+        driver: The WebDriver instance to use
         store_info: Dictionary with store information
         pbar: Progress bar instance for updates
-        category_workers: Number of parallel workers for categories within this store (default: 5)
     
     Returns (success, store_info, error_message)
     """
@@ -346,12 +421,11 @@ def process_single_store(store_info, pbar=None, category_workers=5):
     
     try:
         # Log start
-        with progress_lock:
-            if pbar:
-                tqdm.write(f"[{state}] Store #{store_number} - Starting with {category_workers} category workers...")
+        if pbar:
+            tqdm.write(f"[{state}] Store #{store_number} - Starting...")
         
-        # Scrape the menu for this store (with parallel category processing)
-        menu_data = scrape_store_menu(store_number, category_workers)
+        # Scrape the menu for this store
+        menu_data = scrape_store_menu(driver, store_number)
         
         if menu_data:
             # Add metadata
@@ -365,36 +439,31 @@ def process_single_store(store_info, pbar=None, category_workers=5):
             total_items = sum(len(items) for items in menu_data.get("categories", {}).values())
             
             # Log success
-            with progress_lock:
-                if pbar:
-                    tqdm.write(f"[{state}] Store #{store_number} - ✓ Saved: {category_count} categories, {total_items} items")
+            if pbar:
+                tqdm.write(f"[{state}] Store #{store_number} - ✓ Saved: {category_count} categories, {total_items} items")
             
             return (True, store_info, None)
         else:
-            with progress_lock:
-                if pbar:
-                    tqdm.write(f"[{state}] Store #{store_number} - ✗ Failed to scrape menu")
+            if pbar:
+                tqdm.write(f"[{state}] Store #{store_number} - ✗ Failed to scrape menu")
             return (False, store_info, "Failed to scrape menu")
         
     except Exception as e:
         error_msg = str(e)
-        with progress_lock:
-            if pbar:
-                tqdm.write(f"[{state}] Store #{store_number} - ✗ Error: {error_msg}")
+        if pbar:
+            tqdm.write(f"[{state}] Store #{store_number} - ✗ Error: {error_msg}")
         return (False, store_info, error_msg)
         
     finally:
         if pbar:
-            with progress_lock:
-                pbar.update(1)
+            pbar.update(1)
 
-def process_all_stores(max_stores=None, num_workers=3, category_workers=5):
+def process_all_stores(max_stores=None):
     """
-    Process all stores from county JSON files
+    Process all stores from county JSON files using a single Selenium client
     
     Args:
         max_stores: Maximum number of stores to process (None = all stores)
-        num_workers: Number of parallel workers (default: 3)
     """
     # Create Menu folder if it doesn't exist
     os.makedirs("Menu", exist_ok=True)
@@ -451,50 +520,56 @@ def process_all_stores(max_stores=None, num_workers=3, category_workers=5):
     if max_stores is not None:
         stores_to_process = stores_to_process[:max_stores]
         print(f"Limiting to {max_stores} stores for this run")
-      # Process stores in parallel with progress bar
-    with tqdm(total=len(stores_to_process), desc="Scraping menus", unit="store") as pbar:
-        with ThreadPoolExecutor(max_workers=num_workers) as executor:
-            futures = [executor.submit(process_single_store, store_info, pbar, category_workers) for store_info in stores_to_process]
-            
-            for future in as_completed(futures):
-                success, store_info, error_message = future.result()
+      # Create a single driver for all stores
+    print("Initializing Selenium driver...")
+    driver = setup_driver()
+    
+    try:
+        # Process stores sequentially with progress bar
+        with tqdm(total=len(stores_to_process), desc="Scraping menus", unit="store") as pbar:
+            for store_info in stores_to_process:
+                success, store_info, error_message = process_single_store(driver, store_info, pbar)
                 if not success:
                     tqdm.write(f"Error processing store {store_info['store_number']}: {error_message}")
-    
-    print(f"\n✓ Menu scraping completed! Processed {len(stores_to_process)} stores")
-    print(f"Menu files saved to: Menu/")
+        
+        print(f"\n✓ Menu scraping completed! Processed {len(stores_to_process)} stores")
+        print(f"Menu files saved to: Menu/")
+        
+    except KeyboardInterrupt:
+        print("\n\nScript interrupted by user. Cleaning up...")
+        cleanup_driver(driver)
+        sys.exit(0)
+    except Exception as e:
+        print(f"\n\nUnexpected error: {e}")
+        print("Cleaning up...")
+        cleanup_driver(driver)
+        sys.exit(1)
+    finally:
+        cleanup_driver(driver)
 
 if __name__ == "__main__":
+    # Required for multiprocessing on Windows
+    multiprocessing.freeze_support()
+    
+    # Register signal handlers for graceful shutdown
+    signal.signal(signal.SIGINT, signal_handler)
+    signal.signal(signal.SIGTERM, signal_handler)
+    
+    # Register cleanup function to run on exit
+    atexit.register(cleanup_driver)
+    
     # Check for command line arguments
     max_stores = None
-    num_workers = 3
-    category_workers = 5
     
     if len(sys.argv) > 1:
         try:
             max_stores = int(sys.argv[1])
             print(f"Processing {max_stores} stores (test mode)")
         except ValueError:
-            print("Invalid argument. Usage: python menucrawl.py [number_of_stores] [num_workers] [category_workers]")
-            sys.exit(1)
-    
-    if len(sys.argv) > 2:
-        try:
-            num_workers = int(sys.argv[2])
-            print(f"Using {num_workers} parallel store workers")
-        except ValueError:
-            print("Invalid argument. Usage: python menucrawl.py [number_of_stores] [num_workers] [category_workers]")
-            sys.exit(1)
-    
-    if len(sys.argv) > 3:
-        try:
-            category_workers = int(sys.argv[3])
-            print(f"Using {category_workers} parallel category workers per store")
-        except ValueError:
-            print("Invalid argument. Usage: python menucrawl.py [number_of_stores] [num_workers] [category_workers]")
+            print("Invalid argument. Usage: python menucrawl.py [number_of_stores]")
             sys.exit(1)
     
     if max_stores is None:
         print("Processing all stores (full mode)")
     
-    process_all_stores(max_stores, num_workers, category_workers)
+    process_all_stores(max_stores)
