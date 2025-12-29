@@ -805,7 +805,7 @@ def main():
         locations_to_process = all_locations
     
     # Process remaining stores in batches
-    process_stores_in_batches(locations_to_process, batch_size=10)
+    process_stores_in_batches(locations_to_process, batch_size=1)
     
     print("\n" + "="*80)
     print("PROCESSING COMPLETE!")
