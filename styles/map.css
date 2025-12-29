@@ -1,0 +1,247 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    overflow: hidden;
+    background: #1a1a1a;
+}
+
+#map {
+    width: 100vw;
+    height: 100vh;
+    background: #1a1a1a;
+}
+
+/* Loading Indicator */
+.loading {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(30, 30, 30, 0.95);
+    color: #fff;
+    padding: 20px 40px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.5);
+    z-index: 2000;
+    font-size: 16px;
+    border: 1px solid rgba(123, 63, 242, 0.3);
+}
+
+/* Leaflet Popup Styling */
+.leaflet-popup-content-wrapper {
+    background: rgba(30, 30, 30, 0.95);
+    color: #fff;
+    border: 1px solid rgba(123, 63, 242, 0.3);
+}
+
+.leaflet-popup-tip {
+    background: rgba(30, 30, 30, 0.95);
+}
+
+.leaflet-popup-content {
+    margin: 8px;
+}
+
+.popup-title {
+    font-weight: bold;
+    font-size: 14px;
+    margin-bottom: 5px;
+    color: #fff;
+}
+
+.popup-id {
+    font-size: 12px;
+    color: #aaa;
+    margin-bottom: 5px;
+}
+
+.popup-links {
+    display: flex;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.popup-links a {
+    padding: 4px 10px;
+    background: #7B3FF2;
+    color: white;
+    text-decoration: none;
+    border-radius: 4px;
+    font-size: 12px;
+    transition: background 0.2s;
+}
+
+.popup-links a:hover {
+    background: #6329d6;
+}
+
+/* Leaflet Container Styling */
+.leaflet-container {
+    background: #1a1a1a;
+}
+
+.leaflet-tile-container img {
+    image-rendering: -webkit-optimize-contrast;
+}
+
+.leaflet-tile-pane {
+    opacity: 1;
+}
+
+.leaflet-tile {
+    border: none !important;
+}
+
+/* Zoom Controls */
+.leaflet-control-zoom {
+    border: 1px solid rgba(123, 63, 242, 0.5) !important;
+    border-radius: 8px !important;
+    overflow: hidden;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3) !important;
+}
+
+.leaflet-control-zoom a {
+    background: rgba(30, 30, 30, 0.95) !important;
+    color: #fff !important;
+    border: none !important;
+    border-bottom: 1px solid rgba(123, 63, 242, 0.3) !important;
+    width: 36px !important;
+    height: 36px !important;
+    line-height: 36px !important;
+    transition: background 0.3s ease, border-color 0.3s ease !important;
+    text-decoration: none !important;
+}
+
+.leaflet-control-zoom a:last-child {
+    border-bottom: none !important;
+}
+
+.leaflet-control-zoom a:hover {
+    background: rgba(123, 63, 242, 0.2) !important;
+    color: #fff !important;
+    border-color: rgba(123, 63, 242, 0.5) !important;
+}
+
+.leaflet-control-zoom a:focus {
+    outline: none !important;
+    background: rgba(123, 63, 242, 0.2) !important;
+}
+
+.leaflet-control-zoom-in,
+.leaflet-control-zoom-out {
+    font-size: 20px !important;
+    font-weight: bold !important;
+}
+
+.leaflet-bar {
+    box-shadow: none !important;
+}
+
+.leaflet-bar a {
+    background-color: rgba(30, 30, 30, 0.95) !important;
+    border-bottom-color: rgba(123, 63, 242, 0.3) !important;
+}
+
+.leaflet-bar a:hover {
+    background-color: rgba(123, 63, 242, 0.2) !important;
+}
+
+.leaflet-touch .leaflet-bar a {
+    width: 36px !important;
+    height: 36px !important;
+    line-height: 36px !important;
+}
+
+/* Left Panel */
+.left-panel {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 320px;
+    height: 100vh;
+    background: rgba(30, 30, 30, 0.95);
+    backdrop-filter: blur(10px);
+    border-right: 1px solid rgba(123, 63, 242, 0.3);
+    z-index: 1000;
+    transform: translateX(0);
+    transition: transform 0.3s ease;
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.5);
+    overflow-y: auto;
+}
+
+.left-panel.collapsed {
+    transform: translateX(-100%);
+}
+
+.panel-header {
+    padding: 20px;
+    border-bottom: 1px solid rgba(123, 63, 242, 0.3);
+}
+
+.panel-header h2 {
+    color: #fff;
+    font-size: 20px;
+    font-weight: 600;
+    margin: 0;
+}
+
+.panel-content {
+    padding: 20px;
+    color: #ccc;
+}
+
+.panel-content p {
+    margin: 0;
+    font-size: 14px;
+}
+
+/* Panel Toggle Button */
+.panel-toggle {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    width: 48px;
+    height: 48px;
+    background: rgba(30, 30, 30, 0.95);
+    border: 1px solid rgba(123, 63, 242, 0.5);
+    border-radius: 8px;
+    color: #fff;
+    cursor: pointer;
+    z-index: 1001;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: left 0.3s ease, background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    padding: 0;
+}
+
+.panel-toggle.panel-open {
+    left: 340px;
+}
+
+.panel-toggle:hover {
+    background: rgba(123, 63, 242, 0.2);
+    border-color: rgba(123, 63, 242, 0.8);
+    box-shadow: 0 4px 15px rgba(123, 63, 242, 0.3);
+}
+
+.toggle-icon {
+    font-size: 24px;
+    line-height: 1;
+    display: block;
+    transition: transform 0.3s ease;
+}
+
+.panel-toggle.panel-open .toggle-icon {
+    transform: rotate(90deg);
+}
+
+.leaflet-control-attribution {
+    display: none !important;
+}

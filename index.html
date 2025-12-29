@@ -2,269 +2,34 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">    <title>Taco Bell Locations Map</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Taco Bell Locations Map</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            overflow: hidden;
-            background: #1a1a1a;
-        }
-        #map {
-            width: 100vw;
-            height: 100vh;
-            background: #1a1a1a;
-        }
-        .info-panel {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background: rgba(30, 30, 30, 0.95);
-            padding: 15px 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.5);
-            z-index: 1000;
-            font-size: 14px;
-            color: #fff;
-            border: 1px solid rgba(123, 63, 242, 0.3);
-        }
-        .info-panel h2 {
-            margin: 0 0 10px 0;
-            font-size: 18px;
-            color: #fff;
-        }
-        .info-panel .count {
-            font-size: 24px;
-            font-weight: bold;
-            color: #7B3FF2;
-        }
-        .leaflet-popup-content-wrapper {
-            background: rgba(30, 30, 30, 0.95);
-            color: #fff;
-            border: 1px solid rgba(123, 63, 242, 0.3);
-        }
-        .leaflet-popup-tip {
-            background: rgba(30, 30, 30, 0.95);
-        }
-        .leaflet-popup-content {
-            margin: 8px;
-        }
-        .popup-title {
-            font-weight: bold;
-            font-size: 14px;
-            margin-bottom: 5px;
-            color: #fff;
-        }
-        .popup-id {
-            font-size: 12px;
-            color: #aaa;
-            margin-bottom: 5px;
-        }
-        .popup-links {
-            display: flex;
-            gap: 8px;
-            margin-top: 8px;
-        }
-        .popup-links a {
-            padding: 4px 10px;
-            background: #7B3FF2;
-            color: white;
-            text-decoration: none;
-            border-radius: 4px;
-            font-size: 12px;
-            transition: background 0.2s;
-        }
-        .popup-links a:hover {
-            background: #6329d6;
-        }
-        .loading {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(30, 30, 30, 0.95);
-            color: #fff;
-            padding: 20px 40px;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.5);
-            z-index: 2000;
-            font-size: 16px;
-            border: 1px solid rgba(123, 63, 242, 0.3);
-        }
-        .leaflet-container {
-            background: #1a1a1a;
-        }
-        
-        .leaflet-tile-container img {
-            image-rendering: -webkit-optimize-contrast;
-        }
-        
-        /* Hide grid lines */
-        .leaflet-tile-pane {
-            opacity: 1;
-        }
-        
-        .leaflet-tile {
-            border: none !important;
-        }
-        
-        /* Zoom controls dark theme */
-        .leaflet-control-zoom a {
-            background: #1e2a3a !important;
-            color: #e0e0e0 !important;
-            border: 1px solid #2a3f5f !important;
-        }
-
-        .leaflet-control-zoom a:hover {
-            background: #2a3f5f !important;
-        }
-
-        .leaflet-control-attribution {
-            background: rgba(30, 42, 58, 0.8) !important;
-            color: #a0b0c0 !important;
-        }
-
-        .leaflet-control-attribution a {
-            color: #c77dff !important;
-        }
-    </style>
+    <link rel="stylesheet" href="styles/map.css">
 </head>
 <body>
     <div id="loading" class="loading">Loading Taco Bell locations...</div>
+    
+    <!-- Left Panel -->
+    <div id="leftPanel" class="left-panel">
+        <div class="panel-header">
+            <h2>Settings</h2>
+        </div>
+        <div class="panel-content">
+            <p>Settings will go here...</p>
+        </div>
+    </div>
+    
+    <!-- Toggle Button -->
+    <button id="panelToggle" class="panel-toggle panel-open" title="Toggle Settings Panel">
+        <span class="toggle-icon">☰</span>
+    </button>
+    
     <div id="map"></div>
-    <div class="info-panel">
-        <h2>🌮 Taco Bell Locations</h2>
-        <div>Total: <span class="count" id="location-count">0</span></div>
-    </div>    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <script>
-        // Initialize map centered on US with canvas renderer for performance
-        const map = L.map('map', {
-            preferCanvas: true,
-            renderer: L.canvas({ tolerance: 5 }),
-            zoomControl: true,
-            zoomSnap: 0.5,
-            wheelPxPerZoomLevel: 120
-        }).setView([39.8283, -98.5795], 4);
-        
-        // Add dark mode tiles with better performance settings
-        L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-            attribution: '© OpenStreetMap contributors © CARTO',
-            maxZoom: 19,
-            subdomains: 'abcd',
-            updateWhenIdle: false,
-            updateWhenZooming: false,
-            keepBuffer: 2
-        }).addTo(map);        // Create custom purple circle marker for canvas rendering (much faster)
-        const purpleMarkerOptions = {
-            radius: 6,
-            fillColor: "#7B3FF2",
-            color: "#ffffff",
-            weight: 2,
-            opacity: 1,
-            fillOpacity: 0.9,
-            renderer: L.canvas({ tolerance: 5 })
-        };
-
-        // Parse CSV data
-        async function loadLocations() {
-            try {
-                const response = await fetch('data/locations.csv');
-                const csvText = await response.text();
-                
-                // Parse CSV
-                const lines = csvText.trim().split('\n');
-                const locations = [];
-                
-                // Process lines starting from index 1 (skip header)
-                for (let i = 1; i < lines.length; i++) {
-                    const line = lines[i];
-                    
-                    // Handle quoted fields properly
-                    const matches = line.match(/(?:^|,)("(?:[^"]|"")*"|[^,]*)/g);
-                    if (!matches || matches.length < 4) continue;
-                    
-                    const fields = matches.map(field => {
-                        field = field.replace(/^,/, '');
-                        if (field.startsWith('"') && field.endsWith('"')) {
-                            field = field.slice(1, -1).replace(/""/g, '"');
-                        }
-                        return field;
-                    });
-                    
-                    const [storeId, location, page, mapUrl] = fields;
-                    
-                    // Extract coordinates from Google Maps URL
-                    if (mapUrl) {
-                        const coordMatch = mapUrl.match(/destination=([-\d.]+),([-\d.]+)/);
-                        if (coordMatch) {
-                            const lat = parseFloat(coordMatch[1]);
-                            const lng = parseFloat(coordMatch[2]);
-                            
-                            if (!isNaN(lat) && !isNaN(lng)) {
-                                locations.push({
-                                    storeId,
-                                    location,
-                                    page,
-                                    mapUrl,
-                                    lat,
-                                    lng
-                                });
-                            }
-                        }
-                    }
-                }
-                
-                return locations;
-            } catch (error) {
-                console.error('Error loading locations:', error);
-                return [];
-            }
-        }        // Add markers to map with canvas rendering for maximum performance
-        async function initMap() {
-            const locations = await loadLocations();
-            
-            document.getElementById('location-count').textContent = locations.length;
-            document.getElementById('loading').style.display = 'none';
-            
-            // Use canvas-based circle markers for much better performance
-            const allMarkers = [];
-            
-            locations.forEach(loc => {
-                const marker = L.circleMarker([loc.lat, loc.lng], purpleMarkerOptions)
-                    .bindPopup(() => {
-                        return `
-                            <div class="popup-title">${loc.location}</div>
-                            <div class="popup-id">Store ID: ${loc.storeId}</div>
-                            <div class="popup-links">
-                                <a href="${loc.page}" target="_blank">Store Page</a>
-                                <a href="${loc.mapUrl}" target="_blank">Directions</a>
-                            </div>
-                        `;
-                    }, {
-                        maxWidth: 300,
-                        autoPan: false
-                    });
-                
-                allMarkers.push(marker);
-            });
-            
-            // Add all markers at once using a layer group for better performance
-            const markerLayer = L.layerGroup(allMarkers).addTo(map);
-            
-            // Fit map to show all markers
-            if (locations.length > 0) {
-                const bounds = L.latLngBounds(locations.map(loc => [loc.lat, loc.lng]));
-                map.fitBounds(bounds, { padding: [50, 50] });
-            }
-        }
-
-        // Initialize the map
-        initMap();
-    </script>
+    
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="js/config.js"></script>
+    <script src="js/csvParser.js"></script>
+    <script src="js/map.js"></script>
 </body>
 </html>
