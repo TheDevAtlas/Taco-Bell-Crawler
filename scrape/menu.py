@@ -699,11 +699,11 @@ def append_to_menu_csv(store_results, existing_items):
                         row.append(price if price is not None else '')
                     writer.writerow(row)
         
-        return existing_items
+        return set(existing_items)  # Ensure we return a set
         
     except Exception as e:
         print(f"Error appending to CSV: {e}")
-        return existing_items
+        return set(existing_items)
 
 def write_comprehensive_menu_csv(store_results, existing_rows=None, existing_items=None):
     """Write comprehensive CSV with all stores and all menu items"""
@@ -769,10 +769,10 @@ def write_comprehensive_menu_csv(store_results, existing_rows=None, existing_ite
             writer.writerow(headers)
             writer.writerows(rows)
         
-        return sorted_menu_items
+        return all_menu_items  # Return set, not sorted list
         
     except Exception as e:
-        return None
+        return existing_items if existing_items else set()
 
 def main():
     """Main function to fetch and display the menu categories"""
