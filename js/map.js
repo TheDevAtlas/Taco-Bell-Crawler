@@ -4,12 +4,15 @@ class TacoBellMap {
         this.markerLayer = null;
         this.locations = [];
         this.panelOpen = true;
+        this.priceColorEnabled = false;
     }
 
     initialize() {
         this.initializeMap();
         this.loadAndDisplayLocations();
         this.initializePanelToggle();
+        this.initializePriceColorToggle();
+        this.initializeMenuManager();
     }
 
     initializePanelToggle() {
@@ -21,6 +24,28 @@ class TacoBellMap {
             panel.classList.toggle('collapsed');
             toggleBtn.classList.toggle('panel-open');
         });
+    }
+
+    initializePriceColorToggle() {
+        const toggle = document.getElementById('priceColorToggle');
+        toggle.addEventListener('change', (e) => {
+            this.priceColorEnabled = e.target.checked;
+            this.updateMarkerColors();
+        });
+    }
+
+    async initializeMenuManager() {
+        menuManager = new MenuManager();
+        await menuManager.initialize();
+        
+        // Listen for order updates to refresh marker colors
+        const originalUpdateUI = menuManager.updateUI.bind(menuManager);
+        menuManager.updateUI = () => {
+            originalUpdateUI();
+            if (this.priceColorEnabled) {
+                this.updateMarkerColors();
+            }
+        };
     }
 
     initializeMap() {
@@ -45,11 +70,100 @@ class TacoBellMap {
     }
 
     createMarker(location) {
-        return L.circleMarker([location.lat, location.lng], MAP_CONFIG.markerStyle)
+        const marker = L.circleMarker([location.lat, location.lng], MAP_CONFIG.markerStyle)
             .bindPopup(() => this.createPopupContent(location), {
                 maxWidth: 300,
                 autoPan: false
             });
+        
+        // Store location reference for later updates
+        marker.locationData = location;
+        return marker;
+    }
+
+    getPriceColor(price, minPrice, maxPrice) {
+        if (minPrice === maxPrice) {
+            return '#FFD700'; // Gold if all prices are the same
+        }
+        
+        // Normalize price to 0-1 range
+        const normalized = (price - minPrice) / (maxPrice - minPrice);
+        
+        // Create gradient: green -> yellow -> orange -> red
+        let r, g, b;
+        
+        if (normalized < 0.33) {
+            // Green to Yellow
+            const t = normalized / 0.33;
+            r = Math.round(0 + (255 * t));
+            g = Math.round(255);
+            b = 0;
+        } else if (normalized < 0.67) {
+            // Yellow to Orange
+            const t = (normalized - 0.33) / 0.34;
+            r = 255;
+            g = Math.round(255 - (100 * t));
+            b = 0;
+        } else {
+            // Orange to Red
+            const t = (normalized - 0.67) / 0.33;
+            r = 255;
+            g = Math.round(165 - (165 * t));
+            b = 0;
+        }
+        
+        return `rgb(${r}, ${g}, ${b})`;
+    }
+
+    updateMarkerColors() {
+        if (!this.markerLayer) return;
+        
+        const layers = this.markerLayer.getLayers();
+        
+        if (!this.priceColorEnabled) {
+            // Reset to default purple color
+            layers.forEach(marker => {
+                marker.setStyle(MAP_CONFIG.markerStyle);
+            });
+            return;
+        }
+        
+        // Get price range for color gradient
+        const prices = [];
+        layers.forEach(marker => {
+            const price = menuManager.getLocationPriceForColoring(marker.locationData.storeId);
+            if (price !== null) {
+                prices.push(price);
+            }
+        });
+        
+        if (prices.length === 0) {
+            // No prices available, reset to default
+            layers.forEach(marker => {
+                marker.setStyle(MAP_CONFIG.markerStyle);
+            });
+            return;
+        }
+        
+        const minPrice = Math.min(...prices);
+        const maxPrice = Math.max(...prices);
+        
+        // Update each marker color based on price
+        layers.forEach(marker => {
+            const price = menuManager.getLocationPriceForColoring(marker.locationData.storeId);
+            
+            if (price !== null) {
+                const color = this.getPriceColor(price, minPrice, maxPrice);
+                marker.setStyle({
+                    ...MAP_CONFIG.markerStyle,
+                    fillColor: color,
+                    color: color
+                });
+            } else {
+                // Location doesn't have all items, keep default color
+                marker.setStyle(MAP_CONFIG.markerStyle);
+            }
+        });
     }
 
     async loadAndDisplayLocations() {

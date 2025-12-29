@@ -162,7 +162,7 @@ body {
     position: fixed;
     top: 0;
     left: 0;
-    width: 320px;
+    width: 380px;
     height: 100vh;
     background: rgba(30, 30, 30, 0.95);
     backdrop-filter: blur(10px);
@@ -172,6 +172,8 @@ body {
     transition: transform 0.3s ease;
     box-shadow: 2px 0 10px rgba(0, 0, 0, 0.5);
     overflow-y: auto;
+    display: flex;
+    flex-direction: column;
 }
 
 .left-panel.collapsed {
@@ -200,6 +202,298 @@ body {
     font-size: 14px;
 }
 
+/* Category Selector */
+.category-selector {
+    display: flex;
+    overflow-x: auto;
+    gap: 8px;
+    padding: 15px;
+    border-bottom: 1px solid rgba(123, 63, 242, 0.3);
+    scrollbar-width: thin;
+    scrollbar-color: rgba(123, 63, 242, 0.5) rgba(30, 30, 30, 0.5);
+}
+
+.category-selector::-webkit-scrollbar {
+    height: 6px;
+}
+
+.category-selector::-webkit-scrollbar-track {
+    background: rgba(30, 30, 30, 0.5);
+}
+
+.category-selector::-webkit-scrollbar-thumb {
+    background: rgba(123, 63, 242, 0.5);
+    border-radius: 3px;
+}
+
+.category-btn {
+    flex-shrink: 0;
+    padding: 8px 16px;
+    background: rgba(50, 50, 50, 0.8);
+    border: 1px solid rgba(123, 63, 242, 0.3);
+    border-radius: 20px;
+    color: #ccc;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+}
+
+.category-btn:hover {
+    background: rgba(123, 63, 242, 0.2);
+    border-color: rgba(123, 63, 242, 0.5);
+    color: #fff;
+}
+
+.category-btn.active {
+    background: rgba(123, 63, 242, 0.8);
+    border-color: #7B3FF2;
+    color: #fff;
+}
+
+/* Menu Items */
+.menu-items {
+    flex: 1;
+    padding: 15px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(123, 63, 242, 0.5) rgba(30, 30, 30, 0.5);
+}
+
+.menu-items::-webkit-scrollbar {
+    width: 6px;
+}
+
+.menu-items::-webkit-scrollbar-track {
+    background: rgba(30, 30, 30, 0.5);
+}
+
+.menu-items::-webkit-scrollbar-thumb {
+    background: rgba(123, 63, 242, 0.5);
+    border-radius: 3px;
+}
+
+.menu-item {
+    display: flex;
+    gap: 12px;
+    padding: 12px;
+    background: rgba(50, 50, 50, 0.5);
+    border: 1px solid rgba(123, 63, 242, 0.2);
+    border-radius: 8px;
+    margin-bottom: 10px;
+    transition: all 0.3s ease;
+}
+
+.menu-item:hover {
+    background: rgba(50, 50, 50, 0.8);
+    border-color: rgba(123, 63, 242, 0.4);
+}
+
+.menu-item-image {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 6px;
+    flex-shrink: 0;
+}
+
+.menu-item-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-width: 0;
+}
+
+.menu-item-name {
+    color: #fff;
+    font-size: 14px;
+    font-weight: 500;
+    margin: 0 0 5px 0;
+    word-wrap: break-word;
+}
+
+.menu-item-counter {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.counter-btn {
+    width: 28px;
+    height: 28px;
+    background: rgba(123, 63, 242, 0.6);
+    border: none;
+    border-radius: 50%;
+    color: #fff;
+    font-size: 18px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    line-height: 1;
+}
+
+.counter-btn:hover {
+    background: rgba(123, 63, 242, 0.8);
+    transform: scale(1.1);
+}
+
+.counter-btn:active {
+    transform: scale(0.95);
+}
+
+.counter-value {
+    color: #fff;
+    font-size: 16px;
+    font-weight: 600;
+    min-width: 30px;
+    text-align: center;
+}
+
+/* Order Summary */
+.order-summary {
+    border-top: 1px solid rgba(123, 63, 242, 0.3);
+    background: rgba(20, 20, 20, 0.8);
+}
+
+.order-header {
+    padding: 15px;
+    border-bottom: 1px solid rgba(123, 63, 242, 0.2);
+}
+
+.order-header h3 {
+    color: #fff;
+    font-size: 16px;
+    font-weight: 600;
+    margin: 0;
+}
+
+.order-list {
+    max-height: 200px;
+    overflow-y: auto;
+    padding: 15px;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(123, 63, 242, 0.5) rgba(30, 30, 30, 0.5);
+}
+
+.order-list::-webkit-scrollbar {
+    width: 6px;
+}
+
+.order-list::-webkit-scrollbar-track {
+    background: rgba(30, 30, 30, 0.5);
+}
+
+.order-list::-webkit-scrollbar-thumb {
+    background: rgba(123, 63, 242, 0.5);
+    border-radius: 3px;
+}
+
+.empty-order {
+    color: #888;
+    font-size: 13px;
+    text-align: center;
+    margin: 0;
+}
+
+.order-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    color: #ccc;
+    font-size: 13px;
+    border-bottom: 1px solid rgba(123, 63, 242, 0.1);
+}
+
+.order-item:last-child {
+    border-bottom: none;
+}
+
+.order-item-name {
+    flex: 1;
+    margin-right: 10px;
+}
+
+.order-item-quantity {
+    color: #7B3FF2;
+    font-weight: 600;
+}
+
+.order-pricing {
+    padding: 15px;
+    background: rgba(30, 30, 30, 0.5);
+    border-top: 1px solid rgba(123, 63, 242, 0.3);
+}
+
+.price-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 6px 0;
+    color: #ccc;
+    font-size: 13px;
+}
+
+.price-row span:last-child {
+    font-weight: 600;
+    color: #fff;
+}
+
+/* Color Toggle */
+.color-toggle-container {
+    padding: 15px;
+    border-top: 1px solid rgba(123, 63, 242, 0.2);
+}
+
+.toggle-label {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    gap: 10px;
+}
+
+.toggle-label input[type="checkbox"] {
+    display: none;
+}
+
+.toggle-slider {
+    position: relative;
+    width: 44px;
+    height: 24px;
+    background: rgba(100, 100, 100, 0.5);
+    border-radius: 12px;
+    transition: background 0.3s ease;
+    flex-shrink: 0;
+}
+
+.toggle-slider::before {
+    content: '';
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 20px;
+    height: 20px;
+    background: #fff;
+    border-radius: 50%;
+    transition: transform 0.3s ease;
+}
+
+.toggle-label input:checked + .toggle-slider {
+    background: rgba(123, 63, 242, 0.8);
+}
+
+.toggle-label input:checked + .toggle-slider::before {
+    transform: translateX(20px);
+}
+
+.toggle-text {
+    color: #ccc;
+    font-size: 13px;
+    user-select: none;
+}
+
 /* Panel Toggle Button */
 .panel-toggle {
     position: fixed;
@@ -222,7 +516,7 @@ body {
 }
 
 .panel-toggle.panel-open {
-    left: 340px;
+    left: 400px;
 }
 
 .panel-toggle:hover {

@@ -13,10 +13,50 @@
     <!-- Left Panel -->
     <div id="leftPanel" class="left-panel">
         <div class="panel-header">
-            <h2>Settings</h2>
+            <h2>Menu & Order</h2>
         </div>
-        <div class="panel-content">
-            <p>Settings will go here...</p>
+        
+        <!-- Category Selector -->
+        <div class="category-selector" id="categorySelector">
+            <!-- Categories will be dynamically loaded -->
+        </div>
+        
+        <!-- Menu Items Display -->
+        <div class="menu-items" id="menuItems">
+            <!-- Items will be dynamically loaded -->
+        </div>
+        
+        <!-- Order Summary -->
+        <div class="order-summary">
+            <div class="order-header">
+                <h3>Your Order</h3>
+            </div>
+            <div id="orderList" class="order-list">
+                <p class="empty-order">No items in order</p>
+            </div>
+            <div id="orderPricing" class="order-pricing" style="display: none;">
+                <div class="price-row">
+                    <span>Min Price:</span>
+                    <span id="minPrice">$0.00</span>
+                </div>
+                <div class="price-row">
+                    <span>Avg Price:</span>
+                    <span id="avgPrice">$0.00</span>
+                </div>
+                <div class="price-row">
+                    <span>Max Price:</span>
+                    <span id="maxPrice">$0.00</span>
+                </div>
+            </div>
+            
+            <!-- Location Color Toggle -->
+            <div class="color-toggle-container">
+                <label class="toggle-label">
+                    <input type="checkbox" id="priceColorToggle">
+                    <span class="toggle-slider"></span>
+                    <span class="toggle-text">Show Price Heatmap</span>
+                </label>
+            </div>
         </div>
     </div>
     
@@ -30,6 +70,7 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="js/config.js"></script>
     <script src="js/csvParser.js"></script>
+    <script src="js/menuManager.js"></script>
     <script src="js/map.js"></script>
 </body>
 </html>
