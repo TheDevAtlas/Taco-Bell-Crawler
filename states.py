@@ -2,6 +2,7 @@ import requests
 from bs4 import BeautifulSoup
 import json
 import re
+import os
 
 def clean_name(name):
     """Remove the count numbers in parentheses from names"""
@@ -29,13 +30,15 @@ def scrape_states():
             state_name = clean_name(link.get_text(strip=True))
             state_url = f"https://locations.tacobell.com/{link.get('href', '')}"
             states[state_name] = state_url
-        
-        print(f"Found {len(states)} states")
+          print(f"Found {len(states)} states")
     
-    with open('states.json', 'w') as f:
+    # Create data folder if it doesn't exist
+    os.makedirs('data', exist_ok=True)
+    
+    with open('data/states.json', 'w') as f:
         json.dump(states, f, indent=2)
     
-    print("✓ States saved to states.json")
+    print("States saved to data/states.json")
 
 if __name__ == "__main__":
     scrape_states()

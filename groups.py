@@ -3,6 +3,7 @@ from bs4 import BeautifulSoup
 import json
 import time
 import re
+import os
 
 def clean_name(name):
     """Remove the count numbers in parentheses from names"""
@@ -40,8 +41,8 @@ def scrape_locations_from_state(state_url, state_name):
 
 def scrape_all_locations():
     """Loop through all states and scrape their locations"""
-    # Load the states from states.json
-    with open('states.json', 'r') as f:
+    # Load the states from data/states.json
+    with open('data/states.json', 'r') as f:
         states = json.load(f)
     
     all_locations = {}
@@ -52,17 +53,19 @@ def scrape_all_locations():
         print(f"\nScraping {clean_state}...")
         locations = scrape_locations_from_state(state_url, clean_state)
         all_locations[clean_state] = locations
-        
-        # Be polite and add a small delay between requests
+          # Be polite and add a small delay between requests
         time.sleep(1)
     
-    # Save all locations to group.json
-    with open('group.json', 'w') as f:
+    # Create data folder if it doesn't exist
+    os.makedirs('data', exist_ok=True)
+    
+    # Save all locations to data/group.json
+    with open('data/groups.json', 'w') as f:
         json.dump(all_locations, f, indent=2)
     
     total_count = sum(len(locs) for locs in all_locations.values())
-    print(f"\n✓ Scraping complete! Total locations found: {total_count}")
-    print(f"Data saved to group.json")
+    print(f"\nScraping complete! Total locations found: {total_count}")
+    print(f"Data saved to data/group.json")
 
 if __name__ == "__main__":
     scrape_all_locations()
