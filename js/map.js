@@ -55,7 +55,38 @@ class TacoBellMap {
         // Add zoom control to top right
         L.control.zoom({ position: 'topright' }).addTo(this.map);
         
+        // Add reset view button to the zoom control
+        this.addResetViewControl();
+        
         L.tileLayer(MAP_CONFIG.tileLayer.url, MAP_CONFIG.tileLayer.options).addTo(this.map);
+    }
+
+    addResetViewControl() {
+        // Wait for zoom control to be added, then append reset button to it
+        setTimeout(() => {
+            const zoomControl = document.querySelector('.leaflet-control-zoom.leaflet-bar.leaflet-control');
+            if (zoomControl) {
+                const button = L.DomUtil.create('a', 'leaflet-control-reset-view', zoomControl);
+                button.innerHTML = '⟲';
+                button.href = '#';
+                button.title = 'Reset View';
+                button.setAttribute('role', 'button');
+                button.setAttribute('aria-label', 'Reset map view');
+                
+                L.DomEvent.on(button, 'click', (e) => {
+                    L.DomEvent.preventDefault(e);
+                    L.DomEvent.stopPropagation(e);
+                    this.resetView();
+                });
+            }
+        }, 0);
+    }
+
+    resetView() {
+        if (this.locations.length > 0) {
+            const bounds = L.latLngBounds(this.locations.map(loc => [loc.lat, loc.lng]));
+            this.map.fitBounds(bounds, { padding: [50, 50], animate: true });
+        }
     }
 
     createPopupContent(location) {
@@ -83,33 +114,33 @@ class TacoBellMap {
 
     getPriceColor(price, minPrice, maxPrice) {
         if (minPrice === maxPrice) {
-            return '#FFD700'; // Gold if all prices are the same
+            return '#B8860B'; // Dark gold if all prices are the same
         }
         
         // Normalize price to 0-1 range
         const normalized = (price - minPrice) / (maxPrice - minPrice);
         
-        // Create gradient: green -> yellow -> orange -> red
+        // Create gradient: dark green -> dark yellow -> burgundy -> dark red
         let r, g, b;
         
         if (normalized < 0.33) {
-            // Green to Yellow
+            // Dark Green to Dark Yellow
             const t = normalized / 0.33;
-            r = Math.round(0 + (255 * t));
-            g = Math.round(255);
+            r = Math.round(0 + (180 * t));
+            g = Math.round(150 + (30 * t));
             b = 0;
         } else if (normalized < 0.67) {
-            // Yellow to Orange
+            // Dark Yellow to Burgundy
             const t = (normalized - 0.33) / 0.34;
-            r = 255;
-            g = Math.round(255 - (100 * t));
-            b = 0;
+            r = Math.round(180 - (40 * t));
+            g = Math.round(180 - (140 * t));
+            b = Math.round(0 + (40 * t));
         } else {
-            // Orange to Red
+            // Burgundy to Dark Red
             const t = (normalized - 0.67) / 0.33;
-            r = 255;
-            g = Math.round(165 - (165 * t));
-            b = 0;
+            r = Math.round(140 + (40 * t));
+            g = Math.round(40 - (40 * t));
+            b = Math.round(40 - (40 * t));
         }
         
         return `rgb(${r}, ${g}, ${b})`;
@@ -156,8 +187,8 @@ class TacoBellMap {
                 const color = this.getPriceColor(price, minPrice, maxPrice);
                 marker.setStyle({
                     ...MAP_CONFIG.markerStyle,
-                    fillColor: color,
-                    color: color
+                    fillColor: color
+                    // Keep the white outline from MAP_CONFIG.markerStyle
                 });
             } else {
                 // Location doesn't have all items, keep default color

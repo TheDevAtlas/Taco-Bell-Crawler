@@ -28,7 +28,7 @@ const MAP_CONFIG = {
         color: "#ffffff",
         weight: 2,
         opacity: 1,
-        fillOpacity: 0.9,
+        fillOpacity: 1,
         renderer: L.canvas({ tolerance: 5 })
     },
     dataPath: 'data/locations.csv'
