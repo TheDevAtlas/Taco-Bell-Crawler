@@ -38,14 +38,27 @@ class TacoBellMap {
         menuManager = new MenuManager();
         await menuManager.initialize();
         
-        // Listen for order updates to refresh marker colors
+        // Listen for order updates to refresh marker colors and popups
         const originalUpdateUI = menuManager.updateUI.bind(menuManager);
         menuManager.updateUI = () => {
             originalUpdateUI();
             if (this.priceColorEnabled) {
                 this.updateMarkerColors();
             }
+            this.updateOpenPopups();
         };
+    }
+
+    updateOpenPopups() {
+        if (!this.markerLayer) return;
+        
+        // Update any open popups with new price information
+        this.markerLayer.eachLayer(marker => {
+            if (marker.isPopupOpen()) {
+                const popup = marker.getPopup();
+                popup.setContent(this.createPopupContent(marker.locationData));
+            }
+        });
     }
 
     initializeMap() {
@@ -90,9 +103,16 @@ class TacoBellMap {
     }
 
     createPopupContent(location) {
+        // Get the price for this specific location
+        const price = menuManager?.getLocationPriceForColoring(location.storeId);
+        const priceHTML = price !== null && price !== undefined 
+            ? `<div class="popup-price">Your Order: $${price.toFixed(2)}</div>`
+            : '';
+        
         return `
             <div class="popup-title">${location.location}</div>
             <div class="popup-id">Store ID: ${location.storeId}</div>
+            ${priceHTML}
             <div class="popup-links">
                 <a href="${location.page}" target="_blank">Store Page</a>
                 <a href="${location.mapUrl}" target="_blank">Directions</a>

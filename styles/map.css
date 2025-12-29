@@ -60,6 +60,17 @@ body {
     margin-bottom: 5px;
 }
 
+.popup-price {
+    font-size: 16px;
+    font-weight: bold;
+    color: #fff;
+    margin: 8px 0;
+    padding: 6px;
+    background: rgba(123, 63, 242, 0.1);
+    border-radius: 4px;
+    text-align: center;
+}
+
 .popup-links {
     display: flex;
     gap: 8px;
