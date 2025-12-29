@@ -4,12 +4,16 @@ class MenuManager {
         this.categories = [];
         this.currentCategory = null;
         this.order = {}; // { itemName: quantity }
+        this.searchQuery = '';
+        this.allItems = []; // Store all items across categories
     }
 
     async initialize() {
         await this.loadMenuData();
         await this.loadCategories();
+        this.buildAllItemsList();
         this.renderCategories();
+        this.setupSearchBar();
         
         // Load first category by default
         if (this.categories.length > 0) {
@@ -172,6 +176,33 @@ class MenuManager {
         return items;
     }
 
+    buildAllItemsList() {
+        this.allItems = [];
+        this.categories.forEach(category => {
+            category.items.forEach(item => {
+                this.allItems.push(item);
+            });
+        });
+    }
+
+    setupSearchBar() {
+        const searchInput = document.getElementById('menuSearch');
+        const clearBtn = document.getElementById('clearSearch');
+        
+        searchInput.addEventListener('input', (e) => {
+            this.searchQuery = e.target.value.toLowerCase().trim();
+            clearBtn.style.display = this.searchQuery ? 'flex' : 'none';
+            this.renderMenuItems();
+        });
+        
+        clearBtn.addEventListener('click', () => {
+            searchInput.value = '';
+            this.searchQuery = '';
+            clearBtn.style.display = 'none';
+            this.renderMenuItems();
+        });
+    }
+
     renderCategories() {
         const container = document.getElementById('categorySelector');
         container.innerHTML = '';
@@ -202,7 +233,24 @@ class MenuManager {
 
         if (!this.currentCategory) return;
 
-        this.currentCategory.items.forEach(item => {
+        // Determine which items to show
+        let itemsToShow;
+        if (this.searchQuery) {
+            // Search across all items
+            itemsToShow = this.allItems.filter(item => 
+                item.name.toLowerCase().includes(this.searchQuery)
+            );
+            
+            if (itemsToShow.length === 0) {
+                container.innerHTML = '<p class="no-results">No items found matching "' + this.searchQuery + '"</p>';
+                return;
+            }
+        } else {
+            // Show current category items
+            itemsToShow = this.currentCategory.items;
+        }
+
+        itemsToShow.forEach(item => {
             const itemEl = document.createElement('div');
             itemEl.className = 'menu-item';
             
