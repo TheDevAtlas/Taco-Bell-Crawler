@@ -29,8 +29,7 @@ const MAP_CONFIG = {
         opacity: 1,
         fillOpacity: 1,
         bubblingMouseEvents: true
-    },
-    collegeMarkerStyle: {
+    },    collegeMarkerStyle: {
         radius: 8,
         fillColor: "#1E90FF",
         color: "#ffffff",
@@ -39,6 +38,17 @@ const MAP_CONFIG = {
         fillOpacity: 0.7,
         bubblingMouseEvents: true
     },
-    dataPath: 'data/locations.csv',
-    collegePath: 'data/colleges.csv'
+    civicsMarkerStyle: {
+        radius: 7,
+        fillColor: "#FFD700",
+        color: "#ffffff",
+        weight: 2,
+        opacity: 1,
+        fillOpacity: 0.8,
+        bubblingMouseEvents: true
+    },    dataPath: 'data/locations.csv',
+    collegePath: 'data/colleges.csv',
+    civicsPath: 'data/civics.csv',
+    statesGeoJsonPath: 'data/us-states.json',
+    roadsGeoJsonPath: 'https://raw.githubusercontent.com/mapbox/mapbox-gl-js/main/test/integration/assets/interstate-highway.geojson'
 };

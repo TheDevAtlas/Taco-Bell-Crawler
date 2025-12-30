@@ -550,6 +550,31 @@ body {
     border-top: 1px solid rgba(123, 63, 242, 0.2);
 }
 
+/* Toggles Section */
+.toggles-section {
+    display: flex;
+    justify-content: space-around;
+    gap: 15px;
+    padding: 20px 15px;
+    border-top: 1px solid rgba(123, 63, 242, 0.2);
+}
+
+.toggle-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+.toggle-label-text {
+    color: #ccc;
+    font-size: 12px;
+    font-weight: 500;
+    user-select: none;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
 .toggle-label {
     display: flex;
     align-items: center;
@@ -595,6 +620,73 @@ body {
     color: #ccc;
     font-size: 13px;
     user-select: none;
+}
+
+/* Disclaimer Section */
+.disclaimer-section {
+    padding: 15px;
+    border-top: 1px solid rgba(123, 63, 242, 0.2);
+    background: rgba(20, 20, 20, 0.5);
+}
+
+.disclaimer-text {
+    color: #999;
+    font-size: 11px;
+    line-height: 1.5;
+    margin-bottom: 12px;
+    text-align: center;
+    padding: 8px;
+    background: rgba(255, 193, 7, 0.1);
+    border-left: 3px solid rgba(255, 193, 7, 0.5);
+    border-radius: 4px;
+}
+
+.project-links {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
+
+.project-link {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    background: rgba(123, 63, 242, 0.15);
+    border: 1px solid rgba(123, 63, 242, 0.3);
+    border-radius: 6px;
+    color: #fff;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    flex: 1;
+    justify-content: center;
+}
+
+.project-link:hover {
+    background: rgba(123, 63, 242, 0.3);
+    border-color: rgba(123, 63, 242, 0.6);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(123, 63, 242, 0.3);
+}
+
+.link-icon {
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+}
+
+.github-link:hover {
+    background: rgba(88, 166, 255, 0.2);
+    border-color: rgba(88, 166, 255, 0.5);
+    box-shadow: 0 4px 12px rgba(88, 166, 255, 0.3);
+}
+
+.youtube-link:hover {
+    background: rgba(255, 0, 0, 0.2);
+    border-color: rgba(255, 0, 0, 0.5);
+    box-shadow: 0 4px 12px rgba(255, 0, 0, 0.3);
 }
 
 /* Panel Toggle Button */

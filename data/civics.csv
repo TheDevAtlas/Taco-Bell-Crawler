@@ -1,0 +1,51 @@
+state,name,poverty_rate
+AL,Alabama,15.5
+AK,Alaska,10.1
+AZ,Arizona,13.5
+AR,Arkansas,16.2
+CA,California,12.3
+CO,Colorado,9.6
+CT,Connecticut,9.9
+DE,Delaware,11.3
+FL,Florida,12.4
+GA,Georgia,13.3
+HI,Hawaii,9.3
+ID,Idaho,11.0
+IL,Illinois,11.5
+IN,Indiana,11.9
+IA,Iowa,10.2
+KS,Kansas,11.4
+KY,Kentucky,16.0
+LA,Louisiana,18.6
+ME,Maine,11.0
+MD,Maryland,9.0
+MA,Massachusetts,9.4
+MI,Michigan,13.0
+MN,Minnesota,9.0
+MS,Mississippi,19.4
+MO,Missouri,12.7
+MT,Montana,12.4
+NE,Nebraska,9.9
+NV,Nevada,12.5
+NH,New Hampshire,7.3
+NJ,New Jersey,9.2
+NM,New Mexico,18.2
+NY,New York,13.6
+NC,North Carolina,13.1
+ND,North Dakota,10.6
+OH,Ohio,13.1
+OK,Oklahoma,15.2
+OR,Oregon,11.8
+PA,Pennsylvania,11.8
+RI,Rhode Island,10.8
+SC,South Carolina,13.8
+SD,South Dakota,11.9
+TN,Tennessee,13.9
+TX,Texas,13.9
+UT,Utah,8.9
+VT,Vermont,10.2
+VA,Virginia,9.9
+WA,Washington,9.8
+WV,West Virginia,17.0
+WI,Wisconsin,10.4
+WY,Wyoming,10.1
