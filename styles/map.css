@@ -556,7 +556,7 @@ button {
     transform: translateX(0);
     transition: transform 0.3s ease;
     box-shadow: 2px 0 10px rgba(0, 0, 0, 0.5);
-    overflow-y: auto;
+    overflow: hidden;
     display: flex;
     flex-direction: column;
 }
@@ -710,8 +710,10 @@ button {
 ------------------------------------------------------------- */
 .menu-items {
     flex: 1;
+    min-height: 0;
     padding: 15px;
     overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
     scrollbar-width: thin;
     scrollbar-color: rgba(255, 255, 255, 0.15) transparent;
 }
@@ -812,8 +814,27 @@ button {
    ORDER SUMMARY
 ------------------------------------------------------------- */
 .order-summary {
+    flex-shrink: 0;
+    max-height: 45vh;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
     border-top: 1px solid rgba(255, 255, 255, 0.08);
     background: rgba(17, 17, 17, 0.8);
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.15) transparent;
+}
+
+.order-summary::-webkit-scrollbar {
+    width: 6px;
+}
+
+.order-summary::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.order-summary::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 3px;
 }
 
 .order-header {
@@ -1125,6 +1146,16 @@ button {
     /* ── Panel: full-width overlay ── */
     .left-panel {
         width: 100vw;
+    }
+
+    /* Cap order-summary so disclaimer stays on-screen */
+    .order-summary {
+        max-height: clamp(160px, 40vh, 350px);
+    }
+
+    /* Tighter order list on small screens */
+    .order-list {
+        max-height: 120px;
     }
 
     /* Keep toggle visible on-screen when panel is open */
