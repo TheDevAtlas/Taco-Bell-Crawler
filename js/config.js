@@ -23,7 +23,7 @@ const MAP_CONFIG = {
         }
     },    markerStyle: {
         radius: 6,
-        fillColor: "#7B3FF2",
+        fillColor: "#1176d5",
         color: "#ffffff",
         weight: 2,
         opacity: 1,

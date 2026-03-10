@@ -3,13 +3,54 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Taco Bell Locations Map</title>
+    <title>Taco Bell Pricing Map | TheDevAtlas</title>
+    <link rel="icon" type="image/png" href="https://thedevatlas.com/assets/branding/Favicon.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <link rel="stylesheet" href="styles/map.css">
 </head>
 <body>
     <div id="loading" class="loading">Loading Taco Bell locations...</div>
-    
+
+    <!-- ═══════════════════════════════════════
+         HEADER
+    ═══════════════════════════════════════ -->
+    <header class="site-header" id="site-header">
+      <div class="header-inner">
+        <div class="header-left">
+          <a href="https://thedevatlas.com/" aria-label="TheDevAtlas home">
+            <img src="https://thedevatlas.com/assets/branding/Logo_Blue.png" alt="TheDevAtlas" class="header-logo" />
+          </a>
+          <a href="https://thedevatlas.com/" aria-label="TheDevAtlas home">
+            <img src="https://thedevatlas.com/assets/branding/WordMark.png" alt="TheDevAtlas" class="header-wordmark" />
+          </a>
+        </div>
+
+        <nav class="header-nav" aria-label="Main navigation">
+          <a href="https://thedevatlas.com/" class="nav-link">Home</a>
+          <a href="https://thedevatlas.com/projects" class="nav-link">Projects</a>
+          <a href="https://thedevatlas.com/blog" class="nav-link">Blog</a>
+        </nav>
+
+        <div class="header-right">
+          <a href="https://www.youtube.com/@thedevatlas/videos" class="btn-icon-social" aria-label="YouTube" target="_blank" rel="noopener noreferrer">
+            <img src="https://thedevatlas.com/assets/icons/youtube.png" alt="" class="btn-social-icon" aria-hidden="true" />
+          </a>
+          <a href="https://github.com/TheDevAtlas" class="btn-icon-social" aria-label="GitHub" target="_blank" rel="noopener noreferrer">
+            <img src="https://thedevatlas.com/assets/icons/github.png" alt="" class="btn-social-icon" aria-hidden="true" />
+          </a>
+          <a href="https://discord.com/invite/BUEZUdaeWJ" class="btn-icon-social" aria-label="Discord" target="_blank" rel="noopener noreferrer">
+            <img src="https://thedevatlas.com/assets/icons/discord.png" alt="" class="btn-social-icon" aria-hidden="true" />
+          </a>
+          <a href="https://steamcommunity.com/id/thedevatlas" class="btn-icon-social" aria-label="Steam" target="_blank" rel="noopener noreferrer">
+            <img src="https://thedevatlas.com/assets/icons/steam.png" alt="" class="btn-social-icon" aria-hidden="true" />
+          </a>
+        </div>
+      </div>
+    </header>
+
     <!-- Left Panel -->
     <div id="leftPanel" class="left-panel">
         <div class="panel-header">
