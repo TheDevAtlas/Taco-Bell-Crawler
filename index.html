@@ -12,6 +12,22 @@
     <link rel="stylesheet" href="styles/map.css">
 </head>
 <body>
+
+    <!-- Hidden SVG colour filters for white icon PNGs -->
+    <svg aria-hidden="true" style="height:0;width:0;position:absolute;overflow:hidden" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <filter id="icon-red" color-interpolation-filters="sRGB">
+          <feColorMatrix type="matrix" values="0 0 0 0 1  0 0 0 0 0  0 0 0 0 0  0 0 0 1 0"/>
+        </filter>
+        <filter id="icon-blue" color-interpolation-filters="sRGB">
+          <feColorMatrix type="matrix" values="0 0 0 0 0.102  0 0 0 0 0.624  0 0 0 0 1  0 0 0 1 0"/>
+        </filter>
+        <filter id="icon-purple" color-interpolation-filters="sRGB">
+          <feColorMatrix type="matrix" values="0 0 0 0 0.431  0 0 0 0 0.329  0 0 0 0 0.580  0 0 0 1 0"/>
+        </filter>
+      </defs>
+    </svg>
+
     <div id="loading" class="loading">Loading Taco Bell locations...</div>
 
     <!-- ═══════════════════════════════════════
@@ -19,13 +35,55 @@
     ═══════════════════════════════════════ -->
     <header class="site-header" id="site-header">
       <div class="header-inner">
+
         <div class="header-left">
-          <a href="https://thedevatlas.com/" aria-label="TheDevAtlas home">
-            <img src="https://thedevatlas.com/assets/branding/Logo_Blue.png" alt="TheDevAtlas" class="header-logo" />
-          </a>
-          <a href="https://thedevatlas.com/" aria-label="TheDevAtlas home">
-            <img src="https://thedevatlas.com/assets/branding/WordMark.png" alt="TheDevAtlas" class="header-wordmark" />
-          </a>
+          <div class="logo-wrapper">
+            <button class="logo-btn" aria-label="TheDevAtlas home">
+              <img src="https://thedevatlas.com/assets/branding/Logo_Blue.png" alt="TheDevAtlas" class="header-logo" />
+              <svg class="chevron-down" width="10" height="6" viewBox="0 0 10 6" fill="none" aria-hidden="true">
+                <path d="M1 1L5 5L9 1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
+            <div class="logo-dropdown" role="menu" aria-label="Site navigation">
+              <div class="logo-dropdown-grid">
+                <div class="logo-dropdown-col">
+                  <p class="logo-dropdown-heading">Pages</p>
+                  <a href="https://thedevatlas.com/" class="logo-dropdown-item" role="menuitem">
+                    <svg class="logo-dropdown-svg" width="26" height="26" viewBox="0 0 26 26" fill="none" stroke="currentColor" aria-hidden="true"><path d="M4 11L13 4l9 7v10.5a1.5 1.5 0 01-1.5 1.5h-15A1.5 1.5 0 014 21.5V11z" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M10 22.5V14h6v8.5" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    Home
+                  </a>
+                  <a href="https://thedevatlas.com/projects" class="logo-dropdown-item" role="menuitem">
+                    <svg class="logo-dropdown-svg" width="26" height="26" viewBox="0 0 26 26" fill="none" stroke="currentColor" aria-hidden="true"><rect x="4" y="6" width="18" height="15" rx="1.5" stroke-width="1.6"/><path d="M4 10h18" stroke-width="1.6"/><circle cx="7" cy="8" r=".8" fill="currentColor" stroke="none"/><circle cx="9.5" cy="8" r=".8" fill="currentColor" stroke="none"/><circle cx="12" cy="8" r=".8" fill="currentColor" stroke="none"/></svg>
+                    Projects
+                  </a>
+                  <a href="https://thedevatlas.com/blog" class="logo-dropdown-item" role="menuitem">
+                    <svg class="logo-dropdown-svg" width="26" height="26" viewBox="0 0 26 26" fill="none" stroke="currentColor" aria-hidden="true"><path d="M5 21l1.5-4.5L18 5l3 3L9.5 19.5 5 21z" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M15.5 7.5l3 3" stroke-width="1.6" stroke-linecap="round"/></svg>
+                    Blog
+                  </a>
+                </div>
+                <div class="logo-dropdown-col">
+                  <p class="logo-dropdown-heading">Socials</p>
+                  <a href="https://www.youtube.com/@thedevatlas/videos" class="logo-dropdown-item" role="menuitem" target="_blank" rel="noopener noreferrer">
+                    <img src="https://thedevatlas.com/assets/icons/youtube.png" class="logo-dropdown-icon ldi--youtube" alt="" aria-hidden="true" />
+                    YouTube
+                  </a>
+                  <a href="https://github.com/TheDevAtlas" class="logo-dropdown-item" role="menuitem" target="_blank" rel="noopener noreferrer">
+                    <img src="https://thedevatlas.com/assets/icons/github.png" class="logo-dropdown-icon ldi--github" alt="" aria-hidden="true" />
+                    GitHub
+                  </a>
+                  <a href="https://discord.com/invite/BUEZUdaeWJ" class="logo-dropdown-item" role="menuitem" target="_blank" rel="noopener noreferrer">
+                    <img src="https://thedevatlas.com/assets/icons/discord.png" class="logo-dropdown-icon ldi--discord" alt="" aria-hidden="true" />
+                    Discord
+                  </a>
+                  <a href="https://steamcommunity.com/id/thedevatlas" class="logo-dropdown-item" role="menuitem" target="_blank" rel="noopener noreferrer">
+                    <img src="https://thedevatlas.com/assets/icons/steam.png" class="logo-dropdown-icon ldi--steam" alt="" aria-hidden="true" />
+                    Steam
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+          <a href="https://thedevatlas.com/" aria-label="TheDevAtlas home"><img src="https://thedevatlas.com/assets/branding/WordMark.png" alt="TheDevAtlas" class="header-wordmark" /></a>
         </div>
 
         <nav class="header-nav" aria-label="Main navigation">
@@ -35,19 +93,20 @@
         </nav>
 
         <div class="header-right">
-          <a href="https://www.youtube.com/@thedevatlas/videos" class="btn-icon-social" aria-label="YouTube" target="_blank" rel="noopener noreferrer">
+          <a href="https://www.youtube.com/@thedevatlas/videos" class="btn btn-icon-social" aria-label="YouTube" target="_blank" rel="noopener noreferrer">
             <img src="https://thedevatlas.com/assets/icons/youtube.png" alt="" class="btn-social-icon" aria-hidden="true" />
           </a>
-          <a href="https://github.com/TheDevAtlas" class="btn-icon-social" aria-label="GitHub" target="_blank" rel="noopener noreferrer">
+          <a href="https://github.com/TheDevAtlas" class="btn btn-icon-social" aria-label="GitHub" target="_blank" rel="noopener noreferrer">
             <img src="https://thedevatlas.com/assets/icons/github.png" alt="" class="btn-social-icon" aria-hidden="true" />
           </a>
-          <a href="https://discord.com/invite/BUEZUdaeWJ" class="btn-icon-social" aria-label="Discord" target="_blank" rel="noopener noreferrer">
+          <a href="https://discord.com/invite/BUEZUdaeWJ" class="btn btn-icon-social" aria-label="Discord" target="_blank" rel="noopener noreferrer">
             <img src="https://thedevatlas.com/assets/icons/discord.png" alt="" class="btn-social-icon" aria-hidden="true" />
           </a>
-          <a href="https://steamcommunity.com/id/thedevatlas" class="btn-icon-social" aria-label="Steam" target="_blank" rel="noopener noreferrer">
+          <a href="https://steamcommunity.com/id/thedevatlas" class="btn btn-icon-social" aria-label="Steam" target="_blank" rel="noopener noreferrer">
             <img src="https://thedevatlas.com/assets/icons/steam.png" alt="" class="btn-social-icon" aria-hidden="true" />
           </a>
         </div>
+
       </div>
     </header>
 
@@ -149,5 +208,29 @@
     <script src="js/csvParser.js"></script>
     <script src="js/menuManager.js"></script>
     <script src="js/map.js"></script>
+    <script>
+      // Header: scroll → blurred glass look
+      (function () {
+        var header = document.getElementById('site-header');
+        // Map page has overflow:hidden so we add is-scrolled immediately
+        header.classList.add('is-scrolled');
+
+        // Logo dropdown: click toggle for touch / keyboard users
+        var wrapper = document.querySelector('.logo-wrapper');
+        var btn     = wrapper && wrapper.querySelector('.logo-btn');
+        if (btn) {
+          btn.addEventListener('click', function (e) {
+            e.stopPropagation();
+            wrapper.classList.toggle('is-open');
+          });
+          document.addEventListener('click', function () {
+            wrapper.classList.remove('is-open');
+          });
+          wrapper.querySelector('.logo-dropdown').addEventListener('click', function (e) {
+            e.stopPropagation();
+          });
+        }
+      })();
+    </script>
 </body>
 </html>
