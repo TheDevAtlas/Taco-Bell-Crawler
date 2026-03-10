@@ -1084,6 +1084,7 @@ button {
    RESPONSIVE
 ------------------------------------------------------------- */
 @media (max-width: 560px) {
+    /* ── Header mobile: hide nav & socials, wordmark right-aligned ── */
     .header-nav {
         display: none;
     }
@@ -1096,11 +1097,32 @@ button {
         padding: 0 16px;
     }
 
+    .header-left {
+        flex: 1;
+        justify-content: space-between;
+    }
+
+    .logo-dropdown {
+        position: fixed;
+        top: 64px;
+        left: 16px;
+        right: 16px;
+        min-width: unset;
+        transform: translateY(0);
+    }
+
+    .logo-dropdown::before {
+        display: none;
+    }
+
+    /* ── Panel: full-width overlay ── */
     .left-panel {
         width: 100vw;
     }
 
+    /* Keep toggle visible on-screen when panel is open */
     .panel-toggle.panel-open {
-        left: calc(100vw + 20px);
+        left: auto;
+        right: 16px;
     }
 }

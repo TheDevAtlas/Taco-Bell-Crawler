@@ -32,6 +32,13 @@ class TacoBellMap {    constructor() {
         const toggleBtn = document.getElementById('panelToggle');
         const panel = document.getElementById('leftPanel');
 
+        // Start collapsed on mobile so the map is visible first
+        if (window.innerWidth <= 560) {
+            this.panelOpen = false;
+            panel.classList.add('collapsed');
+            toggleBtn.classList.remove('panel-open');
+        }
+
         toggleBtn.addEventListener('click', () => {
             this.panelOpen = !this.panelOpen;
             panel.classList.toggle('collapsed');
