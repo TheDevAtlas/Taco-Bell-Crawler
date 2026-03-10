@@ -340,6 +340,8 @@ button {
     width: 100vw;
     height: 100vh;
     background: #000000;
+    position: relative;
+    z-index: 1;
 }
 
 /* Loading Indicator */
@@ -440,6 +442,11 @@ button {
 
 .leaflet-tile {
     border: none !important;
+}
+
+/* Push Leaflet top-right controls below the fixed header (64px + 10px gap) */
+.leaflet-top.leaflet-right {
+    top: 74px !important;
 }
 
 /* Zoom Controls */
@@ -1124,5 +1131,10 @@ button {
     .panel-toggle.panel-open {
         left: auto;
         right: 16px;
+    }
+
+    /* Hide zoom controls when panel is open on mobile to avoid overlap */
+    .panel-visible .leaflet-top.leaflet-right {
+        display: none;
     }
 }

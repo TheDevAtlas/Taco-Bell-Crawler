@@ -37,12 +37,16 @@ class TacoBellMap {    constructor() {
             this.panelOpen = false;
             panel.classList.add('collapsed');
             toggleBtn.classList.remove('panel-open');
+            document.body.classList.remove('panel-visible');
+        } else {
+            document.body.classList.add('panel-visible');
         }
 
         toggleBtn.addEventListener('click', () => {
             this.panelOpen = !this.panelOpen;
             panel.classList.toggle('collapsed');
             toggleBtn.classList.toggle('panel-open');
+            document.body.classList.toggle('panel-visible');
         });
     }
 
