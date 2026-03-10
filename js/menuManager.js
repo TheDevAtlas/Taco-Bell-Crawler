@@ -164,7 +164,7 @@ class MenuManager {
         categoryItems.forEach(itemName => {
             if (this.menuData.headers.includes(itemName)) {
                 // Try both .jpg and .png extensions
-                const imagePath = `images/${category}/${encodeURIComponent(itemName)}.jpg`;
+                const imagePath = `images/${encodeURIComponent(category)}/${encodeURIComponent(itemName)}.jpg`;
                 items.push({
                     name: itemName,
                     category: category,
