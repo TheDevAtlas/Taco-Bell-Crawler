@@ -81,7 +81,7 @@ button {
     align-items: center;
     gap: 7px;
     color: #ffffff;
-    padding: 6px 8px 6px 4px;
+    padding: 4px 8px 4px 4px;
     border-radius: 6px;
     transition: opacity 0.2s ease;
 }
@@ -96,9 +96,45 @@ button {
     opacity: 0.8;
 }
 
+.logo-mark {
+    display: grid;
+    align-items: center;
+}
+
 .header-logo {
-    height: 40px;
+    grid-area: 1 / 1;
+    height: 56px;
     width: auto;
+    transition: opacity 0.24s ease;
+}
+
+.header-logo--white {
+    opacity: 1;
+    filter: url(#logo-primary);
+}
+
+.header-logo--blue {
+    opacity: 0;
+}
+
+@media (hover: hover) {
+    .logo-wrapper:hover .header-logo--white {
+        opacity: 0;
+    }
+
+    .logo-wrapper:hover .header-logo--blue {
+        opacity: 1;
+    }
+}
+
+.logo-wrapper.is-open .header-logo--white,
+.logo-btn:focus-visible .header-logo--white {
+    opacity: 0;
+}
+
+.logo-wrapper.is-open .header-logo--blue,
+.logo-btn:focus-visible .header-logo--blue {
+    opacity: 1;
 }
 
 .chevron-down {

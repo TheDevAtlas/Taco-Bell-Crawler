@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Taco Bell Pricing Map | TheDevAtlas</title>
-    <link rel="icon" type="image/png" href="https://thedevatlas.com/assets/branding/Favicon.png" />
+    <link rel="icon" href="favicon.ico" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
@@ -21,6 +21,9 @@
         </filter>
         <filter id="icon-blue" color-interpolation-filters="sRGB">
           <feColorMatrix type="matrix" values="0 0 0 0 0.102  0 0 0 0 0.624  0 0 0 0 1  0 0 0 1 0"/>
+        </filter>
+        <filter id="logo-primary" color-interpolation-filters="sRGB">
+          <feColorMatrix type="matrix" values="0 0 0 0 0  0 0 0 0 0.5059  0 0 0 0 0.9765  0 0 0 1 0"/>
         </filter>
         <filter id="icon-purple" color-interpolation-filters="sRGB">
           <feColorMatrix type="matrix" values="0 0 0 0 0.431  0 0 0 0 0.329  0 0 0 0 0.580  0 0 0 1 0"/>
@@ -39,7 +42,10 @@
         <div class="header-left">
           <div class="logo-wrapper">
             <button class="logo-btn" aria-label="TheDevAtlas home">
-              <img src="https://thedevatlas.com/assets/branding/Logo_Blue.png" alt="TheDevAtlas" class="header-logo" />
+              <span class="logo-mark">
+                <img src="https://thedevatlas.com/assets/branding/Logo_NoBack_White.png" alt="TheDevAtlas" class="header-logo header-logo--white" />
+                <img src="https://thedevatlas.com/assets/branding/Logo_NoBack.png" alt="" aria-hidden="true" class="header-logo header-logo--blue" />
+              </span>
               <svg class="chevron-down" width="10" height="6" viewBox="0 0 10 6" fill="none" aria-hidden="true">
                 <path d="M1 1L5 5L9 1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
               </svg>
